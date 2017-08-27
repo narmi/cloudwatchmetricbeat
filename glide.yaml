@@ -1,0 +1,19 @@
+package: github.com/phillbaker/cloudwatchmetricbeat
+import:
+- package: github.com/elastic/beats
+  version: "5.3"
+  subpackages:
+  - libbeat/beat
+  - libbeat/common
+  - libbeat/logp
+  - libbeat/publisher
+- package: github.com/aws/aws-sdk-go
+  version: 1.8.36
+  subpackages:
+  - aws
+  - aws/session
+  - service/cloudwatch
+- package: github.com/stretchr/testify
+  version: ^1.1.4
+  subpackages:
+  - mock

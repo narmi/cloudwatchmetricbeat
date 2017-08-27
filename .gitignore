@@ -1,0 +1,9 @@
+/.idea
+/build
+
+.DS_Store
+/cloudwatchmetricbeat
+/cloudwatchmetricbeat.test
+*.pyc
+
+/vendor

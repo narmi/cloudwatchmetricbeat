@@ -1,0 +1,5 @@
+= Cloudwatchmetricbeat Docs
+
+Welcome to the Cloudwatchmetricbeat documentation.
+
+

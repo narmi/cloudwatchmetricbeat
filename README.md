@@ -41,15 +41,25 @@ aws_dimensions | Optional. Which dimension to fan out over.
 aws_dimension_select | Optional. Which dimension values to filter. Specify a map from the dimension name to a list of values to select from that dimension.
 aws_dimension_select_regex | Optional. Which dimension values to filter on with a regular expression. Specify a map from the dimension name to a list of regexes that will be applied to select from that dimension.
 aws_statistics | Optional. A list of statistics to retrieve, values can include Sum, SampleCount, Minimum, Maximum, Average. Defaults to all statistics unless extended statistics are requested.
-aws_extended_statistics | Optional. A list of extended statistics to retrieve. Extended statistics currently include percentiles in the form `pN` or `pN.N`.
-delay_seconds | Optional. The newest data to request. Used to avoid collecting data that has not fully converged. Defaults to 600s. Can be set globally and per metric.
-range_seconds | Optional. How far back to request data for. Useful for cases such as Billing metrics that are only set every few hours. Defaults to 600s. Can be set globally and per metric.
+delay_seconds | Optional. The newest data to request. Used to avoid collecting data that has not fully converged. Defaults to 300s.
+range_seconds | Optional. How far back to request data for. Useful for cases such as Billing metrics that are only set every few hours. Defaults to 600s.
 period_seconds | Optional. [Period](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#CloudWatchPeriods) to request the metric for. Only the most recent data point is used. Defaults to 60s. Can be set globally and per metric.
 
 
 CloudWatch has been observed to sometimes take minutes for reported values to
-converge. The default `delay_seconds` will result in data that is at least 10
+converge. The default `delay_seconds` will result in data that is at least 5
 minutes old being requested to mitigate this.
+
+* Data points with a period of less than 60 seconds are available for
+3 hours. These data points are high-resolution metrics and are available
+only for custom metrics that have been defined with a StorageResolution
+of 1.
+* Data points with a period of 60 seconds (1-minute) are available for
+15 days.
+* Data points with a period of 300 seconds (5-minute) are available for
+63 days.
+* Data points with a period of 3600 seconds (1 hour) are available for
+455 days (15 months).
 
 ### Cost
 
@@ -68,6 +78,7 @@ requests (as of Jan 2015), that is around $45 per month.
 ### Requirements
 
 * [Golang](https://golang.org/dl/) 1.7
+* [Glide](https://github.com/Masterminds/glide)
 
 ### Init Project
 To get running with Cloudwatchmetricbeat and also install the
@@ -90,8 +101,7 @@ For further development, check out the [beat developer guide](https://www.elasti
 
 ### Build
 
-To build the binary for Cloudwatchmetricbeat run the command below. This will generate a binary
-in the same directory with the name cloudwatchmetricbeat.
+To build the binary for Cloudwatchmetricbeat run the command below. This will generate a binary in the same directory with the name cloudwatchmetricbeat.
 
 ```
 make
@@ -127,8 +137,7 @@ The test coverage is reported in the folder `./build/coverage/`
 
 ### Update
 
-Each beat has a template for the mapping in elasticsearch and a documentation for the fields
-which is automatically generated based on `etc/fields.yml`.
+Each beat has a template for the mapping in elasticsearch and a documentation for the fields which is automatically generated based on `etc/fields.yml`.
 To generate etc/cloudwatchmetricbeat.template.json and etc/cloudwatchmetricbeat.asciidoc
 
 ```

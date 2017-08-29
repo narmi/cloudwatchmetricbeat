@@ -63,26 +63,16 @@ func (cwb *Cloudwatchmetricbeat) Run(b *beat.Beat) error {
 	logp.Info("cloudwatchmetricbeat is running! Hit CTRL-C to stop it.")
 
 	cwb.client = b.Publisher.Connect()
-	// ticker := time.NewTicker(cwb.config.Period)
-	// counter := 1
-	// for {
-	// 	select {
-	// 	case <-cwb.done:
-	// 		return nil
-	// 	case <-ticker.C:
-	// 	}
+	if cwb.config.Period > 0 {
+		go cwb.monitor()
+		<-cwb.done
+	} else {
+		cwb.refreshMetrics()
 
-	// 	event := common.MapStr{
-	// 		"@timestamp": common.Time(time.Now()),
-	// 		"type":       b.Name,
-	// 		"counter":    counter,
-	// 	}
-	// 	cwb.client.PublishEvent(event)
-	// 	logp.Info("Event sent")
-	// 	counter++
-	// }
-	go cwb.monitor()
-	<-cwb.done
+		for range cwb.config.Prospectors {
+			<-cwb.done
+		}
+	}
 	return nil
 }
 
@@ -90,8 +80,6 @@ func (b *Cloudwatchmetricbeat) Stop() {
 	b.client.Close()
 	close(b.done)
 }
-
-// manager
 
 func (b *Cloudwatchmetricbeat) monitor() {
 	ticker := time.NewTicker(b.config.Period)
@@ -107,13 +95,23 @@ func (b *Cloudwatchmetricbeat) monitor() {
 func (b *Cloudwatchmetricbeat) refreshMetrics() {
 	for _, configProspector := range b.config.Prospectors {
 		p := NewProspector(b, configProspector)
-		go p.Monitor()
+		go func() {
+			p.Monitor()
+			b.done <- struct{}{} // signal we're done
+		}()
+
 		// for _, metricName := range prospector.Metrics {
 		// 	metric := NewMetric(prospector.Id, metricName)
-
 		// }
 	}
 }
+
+// manager
+
+const DefaultPeriodSeconds = 60
+const DefaultDelaySeconds = 300
+const DefaultRangeSeconds = 600
+const DefaultAwsStatistic = "Average"
 
 type Prospector struct {
 	config config.Prospector
@@ -132,8 +130,21 @@ func (p *Prospector) Monitor() {
 		metric := &p.config.Metrics[m]
 		// validate metric
 		if metric.PeriodSeconds == 0 {
-			metric.PeriodSeconds = 60
+			metric.PeriodSeconds = DefaultPeriodSeconds
 		}
+
+		if metric.DelaySeconds == 0 {
+			metric.DelaySeconds = DefaultDelaySeconds
+		}
+
+		if metric.RangeSeconds == 0 {
+			metric.RangeSeconds = DefaultRangeSeconds
+		}
+
+		if len(metric.AWSStatistics) == 0 {
+			metric.AWSStatistics = []string{DefaultAwsStatistic}
+		}
+
 		event, err := p.fetchMetric(metric)
 
 		if err == nil {
@@ -162,9 +173,7 @@ func (p *Prospector) fetchMetric(metric *config.Metric) (*common.MapStr, error) 
 		params.Statistics = append(params.Statistics, aws.String(stat))
 	}
 
-	// labels := make([]string, 0, len(metric.LabelNames))
-
-	// Loop through the dimensions selects to build the filters and the labels array
+	// Loop through the dimensions selects to build the filters
 	for dim := range metric.AWSDimensionSelect {
 		for val := range metric.AWSDimensionSelect[dim] {
 			dimValue := metric.AWSDimensionSelect[dim][val]
@@ -173,20 +182,14 @@ func (p *Prospector) fetchMetric(metric *config.Metric) (*common.MapStr, error) 
 				Name:  aws.String(dim),
 				Value: aws.String(dimValue),
 			})
-
-			// labels = append(labels, dimValue)
 		}
 	}
-
-	// labels = append(labels, collector.Template.Task.Name)
 
 	// Call CloudWatch to gather the datapoints
 	resp, err := p.beat.awsClient.GetMetricStatistics(params)
 	logp.Info("making request: " + fmt.Sprintf("params=%+v", params))
-	// totalRequests.Inc()
 
 	if err != nil {
-		// collector.ErroneousRequests.Inc()
 		logp.Err("aws client error: ", err)
 		return nil, err
 	}
@@ -197,36 +200,50 @@ func (p *Prospector) fetchMetric(metric *config.Metric) (*common.MapStr, error) 
 	}
 
 	// Pick the latest datapoint
-	// dp := getLatestDatapoint(resp.Datapoints) // TODO
-	// logp.Info("Data=%+v", resp.Datapoints)
-	dp := resp.Datapoints[0]
-	var value float64
+	dp := getLatestDatapoint(resp.Datapoints)
+
+	event := common.MapStr{
+		"@timestamp":                     dp.Timestamp,
+		"type":                           "cloudwatchset",
+		"cloudwatchset.name":             p.config.Id,
+		"cloudwatchset.resource_id_type": params.Dimensions[0].Name, // I believe there has to be exactly one?
+		"cloudwatchset.resource_id":      params.Dimensions[0].Value,
+		"cloudwatchset.namespace":        metric.AWSNamespace,
+	}
+
+	// TODO make AWSMetricName into a camelcase
+
 	if dp.Sum != nil {
-		value = float64(*dp.Sum)
+		event[fmt.Sprintf("%s.sum", metric.AWSMetricName)] = float64(*dp.Sum)
 	}
 
 	if dp.Average != nil {
-		value = float64(*dp.Average)
+		event[fmt.Sprintf("%s.avg", metric.AWSMetricName)] = float64(*dp.Average)
 	}
 
 	if dp.Maximum != nil {
-		value = float64(*dp.Maximum)
+		event[fmt.Sprintf("%s.max", metric.AWSMetricName)] = float64(*dp.Maximum)
 	}
 
 	if dp.Minimum != nil {
-		value = float64(*dp.Minimum)
+		event[fmt.Sprintf("%s.min", metric.AWSMetricName)] = float64(*dp.Minimum)
 	}
 
 	if dp.SampleCount != nil {
-		value = float64(*dp.SampleCount)
+		event[fmt.Sprintf("%s.count", metric.AWSMetricName)] = float64(*dp.SampleCount)
 	}
 
-	return &common.MapStr{
-		"@timestamp":              common.Time(time.Now()),
-		"cloudwatch.metric_group": p.config.Id,
-		"cloudwatch.resource":     metric.AWSDimensionSelect, // I believe there has to be exactly one?
-		"cloudwatch.metric_type":  metric.AWSNamespace,
-		"cloudwatch.metric_name":  metric.AWSMetricName,
-		"cloudwatch.value":        value,
-	}, nil
+	return &event, nil
+}
+
+func getLatestDatapoint(datapoints []*cloudwatch.Datapoint) *cloudwatch.Datapoint {
+	var latest *cloudwatch.Datapoint = nil
+
+	for dp := range datapoints {
+		if latest == nil || latest.Timestamp.Before(*datapoints[dp].Timestamp) {
+			latest = datapoints[dp]
+		}
+	}
+
+	return latest
 }

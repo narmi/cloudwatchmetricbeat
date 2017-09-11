@@ -1,4 +1,4 @@
-package: github.com/phillbaker/cloudwatchmetricbeat
+package: github.com/narmitech/cloudwatchmetricbeat
 import:
 - package: github.com/elastic/beats
   version: "5.3"
@@ -13,6 +13,11 @@ import:
   - aws
   - aws/session
   - service/cloudwatch
+  - aws/client/metadata
+  - aws/credentials
+  - aws/defaults
+  - aws/request
+  - aws/signer/v4
 - package: github.com/stretchr/testify
   version: ^1.1.4
   subpackages:

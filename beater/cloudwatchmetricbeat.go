@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/cloudwatch/cloudwatchiface"
 
-	"github.com/phillbaker/cloudwatchmetricbeat/config"
+	"github.com/narmitech/cloudwatchmetricbeat/config"
 )
 
 type Cloudwatchmetricbeat struct {

@@ -1,5 +1,5 @@
 BEAT_NAME=cloudwatchmetricbeat
-BEAT_PATH=github.com/phillbaker/cloudwatchmetricbeat
+BEAT_PATH=github.com/narmitech/cloudwatchmetricbeat
 BEAT_GOPATH=$(firstword $(subst :, ,${GOPATH}))
 BEAT_URL=https://${BEAT_PATH}
 SYSTEM_TESTS=false

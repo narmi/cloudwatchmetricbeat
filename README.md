@@ -1,9 +1,9 @@
 # Cloudwatchmetricbeat
 
-Welcome to Cloudwatchmetricbeat.
+Welcome to Cloudwatchmetricbeat. Based on previous work on [Cloudwatch Logs](https://github.com/e-travel/cloudwatchlogsbeat) and [Metrics](https://github.com/Technofy/cloudwatch_exporter)
 
-Ensure that this folder is at the following location:
-`${GOPATH}/github.com/phillbaker/cloudwatchmetricbeat`
+Ensure that this folder is at the following location: `${GOPATH}/github.com/narmitech/cloudwatchmetricbeat`.
+
 
 ## Credentials and permissions
 
@@ -20,7 +20,7 @@ The `cloudwatch:ListMetrics` and `cloudwatch:GetMetricStatistics` IAM permission
 The configuration is in YAML, an example with common options:
 ```
 ---
-region: us-east-1
+aws_region: us-east-1
 metrics:
  - aws_namespace: AWS/ELB
    aws_metric_name: RequestCount
@@ -32,15 +32,13 @@ metrics:
 
 Name     | Description
 ---------|------------
-region   | Required. The AWS region to connect to.
-role_arn   | Optional. The AWS role to assume. Useful for retrieving cross account metrics.
+aws_region   | Required. The AWS region to connect to.
 metrics  | Required. A list of CloudWatch metrics to retrieve and export
 aws_namespace  | Required. Namespace of the CloudWatch metric.
 aws_metric_name  | Required. Metric name of the CloudWatch metric.
 aws_dimensions | Optional. Which dimension to fan out over.
 aws_dimension_select | Optional. Which dimension values to filter. Specify a map from the dimension name to a list of values to select from that dimension.
-aws_dimension_select_regex | Optional. Which dimension values to filter on with a regular expression. Specify a map from the dimension name to a list of regexes that will be applied to select from that dimension.
-aws_statistics | Optional. A list of statistics to retrieve, values can include Sum, SampleCount, Minimum, Maximum, Average. Defaults to all statistics unless extended statistics are requested.
+aws_statistics | Optional. A list of statistics to retrieve, values can include Sum, SampleCount, Minimum, Maximum, Average. Defaults to Average.
 delay_seconds | Optional. The newest data to request. Used to avoid collecting data that has not fully converged. Defaults to 300s.
 range_seconds | Optional. How far back to request data for. Useful for cases such as Billing metrics that are only set every few hours. Defaults to 600s.
 period_seconds | Optional. [Period](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#CloudWatchPeriods) to request the metric for. Only the most recent data point is used. Defaults to 60s. Can be set globally and per metric.
@@ -93,7 +91,7 @@ It will create a clean git history for each major step. Note that you can always
 To push Cloudwatchmetricbeat in the git repository, run the following commands:
 
 ```
-git remote set-url origin https://github.com/phillbaker/cloudwatchmetricbeat
+git remote set-url origin https://github.com/narmitech/cloudwatchmetricbeat
 git push origin master
 ```
 
@@ -166,9 +164,9 @@ make clean
 To clone Cloudwatchmetricbeat from the git repository, run the following commands:
 
 ```
-mkdir -p ${GOPATH}/github.com/phillbaker/cloudwatchmetricbeat
-cd ${GOPATH}/github.com/phillbaker/cloudwatchmetricbeat
-git clone https://github.com/phillbaker/cloudwatchmetricbeat
+mkdir -p ${GOPATH}/github.com/narmitech/cloudwatchmetricbeat
+cd ${GOPATH}/github.com/narmitech/cloudwatchmetricbeat
+git clone https://github.com/narmitech/cloudwatchmetricbeat
 ```
 
 
@@ -183,4 +181,4 @@ The beat frameworks provides tools to crosscompile and package your beat for dif
 make package
 ```
 
-This will fetch and create all images required for the build process. The hole process to finish can take several minutes.
+This will fetch and create all images required for the build process. The whole process to finish can take several minutes.

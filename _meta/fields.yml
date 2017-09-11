@@ -1,9 +1,31 @@
 - key: cloudwatchmetricbeat
   title: cloudwatchmetricbeat
-  description:
+  description:  A beat for AWS CloudWatch Metrics
   fields:
-    - name: counter
-      type: long
+    # There will also be metric-specific values per individual metric, of the
+    # form: <AWS Metric Name>.{sum,avg,max,min,count}.
+    - name: type
+      type: text
       required: true
       description: >
-        PLEASE UPDATE DOCUMENTATION
+        Always "cloudwatchset".
+    - name: cloudwatchset.name
+      type: text
+      required: true
+      description: >
+        The prospector ID specified in the configuration.
+    - name: cloudwatchset.resource_id_type
+      type: text
+      required: true
+      description: >
+        The AWS CloudWatch metric dimension name.
+    - name: cloudwatchset.resource_id
+      type: text
+      required: true
+      description: >
+        The AWS CloudWatch metric dimension value.
+    - name: cloudwatchset.namespace
+      type: text
+      required: true
+      description: >
+        The AWS CloudWatch metric namespace.

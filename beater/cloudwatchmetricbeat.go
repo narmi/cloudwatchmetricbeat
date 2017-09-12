@@ -148,7 +148,11 @@ func (p *Prospector) Monitor() {
 		event, err := p.fetchMetric(metric)
 
 		if err == nil {
-			p.beat.client.PublishEvent(*event)
+			opts := []publisher.ClientOption{}
+			if p.beat.config.Period <= 0 {
+				opts = []publisher.ClientOption{publisher.Sync}
+			}
+			p.beat.client.PublishEvent(*event, opts...)
 		}
 	}
 }

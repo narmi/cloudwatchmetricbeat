@@ -207,7 +207,7 @@ func (p *Prospector) fetchMetric(metric *config.Metric) (*common.MapStr, error) 
 	dp := getLatestDatapoint(resp.Datapoints)
 
 	event := common.MapStr{
-		"@timestamp":                     dp.Timestamp,
+		"@timestamp":                     common.Time(*dp.Timestamp),
 		"type":                           "cloudwatchset",
 		"cloudwatchset.name":             p.config.Id,
 		"cloudwatchset.resource_id_type": params.Dimensions[0].Name, // I believe there has to be exactly one?

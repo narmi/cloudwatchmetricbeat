@@ -210,31 +210,29 @@ func (p *Prospector) fetchMetric(metric *config.Metric) (*common.MapStr, error) 
 		"@timestamp":                     common.Time(*dp.Timestamp),
 		"type":                           "cloudwatchset",
 		"cloudwatchset.name":             p.config.Id,
-		"cloudwatchset.resource_id_type": params.Dimensions[0].Name, // I believe there has to be exactly one?
+		"cloudwatchset.resource_id_type": toSnake(*params.Dimensions[0].Name), // TODO handle multiple dimensions
 		"cloudwatchset.resource_id":      params.Dimensions[0].Value,
 		"cloudwatchset.namespace":        metric.AWSNamespace,
 	}
 
-	// TODO make AWSMetricName into a camelcase
-
 	if dp.Sum != nil {
-		event[fmt.Sprintf("%s.sum", metric.AWSMetricName)] = float64(*dp.Sum)
+		event[fmt.Sprintf("%s.sum", toSnake(metric.AWSMetricName))] = float64(*dp.Sum)
 	}
 
 	if dp.Average != nil {
-		event[fmt.Sprintf("%s.avg", metric.AWSMetricName)] = float64(*dp.Average)
+		event[fmt.Sprintf("%s.avg", toSnake(metric.AWSMetricName))] = float64(*dp.Average)
 	}
 
 	if dp.Maximum != nil {
-		event[fmt.Sprintf("%s.max", metric.AWSMetricName)] = float64(*dp.Maximum)
+		event[fmt.Sprintf("%s.max", toSnake(metric.AWSMetricName))] = float64(*dp.Maximum)
 	}
 
 	if dp.Minimum != nil {
-		event[fmt.Sprintf("%s.min", metric.AWSMetricName)] = float64(*dp.Minimum)
+		event[fmt.Sprintf("%s.min", toSnake(metric.AWSMetricName))] = float64(*dp.Minimum)
 	}
 
 	if dp.SampleCount != nil {
-		event[fmt.Sprintf("%s.count", metric.AWSMetricName)] = float64(*dp.SampleCount)
+		event[fmt.Sprintf("%s.count", toSnake(metric.AWSMetricName))] = float64(*dp.SampleCount)
 	}
 
 	return &event, nil

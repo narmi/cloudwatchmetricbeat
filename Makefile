@@ -12,6 +12,9 @@ NOTICE_FILE=NOTICE
 # Path to the libbeat Makefile
 -include $(ES_BEATS)/libbeat/scripts/Makefile
 
+# Override the default because of https://github.com/elastic/beats/pull/6190
+TESTIFY_TOOL_REPO=github.com/stretchr/testify
+
 # Initial beat setup
 .PHONY: setup
 setup: copy-vendor

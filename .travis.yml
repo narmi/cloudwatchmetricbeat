@@ -1,9 +1,9 @@
 language: go
 
 go:
-  - 1.7
-  - 1.8
-  - 1.x
+  - '1.9'
+  - '1.10'
+  - master
 
 script:
   - make check
@@ -18,3 +18,14 @@ install:
   - go get -v github.com/Masterminds/glide
   - cd $GOPATH/src/github.com/Masterminds/glide && git checkout tags/0.10.2 && go install && cd -
   - make collect
+
+deploy:
+  provider: releases
+  api_key:
+    secure: lq7wgwiaHblbmFL9zE/O5Zj7ZGn0nqajcXf8v9Pu8OuS5xRS7M6xgigRc3kqWGxtQesuq3R89MmeNzH4fuT/z4IEB/tvwZadrZgg/I20wr4OYFzLdPvtReB1ewP4gwbmWSLBmZXQE8zCPGaLttDbd0jBtoPf42CS5EnzPEqRnOwfDIMHzVaHu/TywDnT+fIlDBl6b31JsT/F86oaslOhpz6dR3tuNAMCKtIT2ZqFpw/1suQ9oQjh5Jf1ttsKNx/FPQGmsggBkT3Ne7Otv5zwuI4XmADnoAE33lGL8Crw90zBmoMQl6FE7ru1iC/5GjIsyLkUA8JiaPtzoMB6236rw2ALhasyW1TVOPY58Vw+r24d/u1rGZflFxJCJAW5J9Xjdg0orC7/JFmMBryffsoHvg2/voSuPVWKDzfuDal9zT8kCKXQZBq6Xb9E4UnA/f89mZXcriaZyiikPe0oioAVtA8t8FOjoJbSBDbDLYGE6iDX8gCVWEc//IvFor1UGSwQtCrbrSoEYGn8r0zV+pLCplKQfs9ro7KkdO4qtO+gEr1l4v5JVPKIQ3/OsM+FFR71vlFD3o9j2iLvMsJ71UhKZY0OdQGVFJ2YFnGUE32qJQgYn4pFso0opRglxysUTtJq/Ra0xG0XfUbUUbzrf+wgFWWD0E12nyOdWPJEWdtMg38=
+  file: cloudwatchmetricbeat
+  skip_cleanup: true
+  on:
+    tags: true
+    branch: master
+    go: 1.10

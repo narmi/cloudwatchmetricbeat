@@ -12,6 +12,10 @@ NOTICE_FILE=NOTICE
 # Path to the libbeat Makefile
 -include $(ES_BEATS)/libbeat/scripts/Makefile
 
+# https://github.com/elastic/apm-server/pull/574/files
+# TESTIFY_TOOL_REPO?=github.com/elastic/beats/vendor/github.com/stretchr/testify/assert
+TESTIFY_TOOL_REPO=github.com/stretchr/testify
+
 # Initial beat setup
 .PHONY: setup
 setup: copy-vendor

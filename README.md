@@ -1,8 +1,18 @@
+[![Travis Build Status](https://travis-ci.org/narmitech/cloudwatchmetricbeat.svg?branch=master)](https://travis-ci.org/narmitech/cloudwatchmetricbeat)
+
 # Cloudwatchmetricbeat
 
 Welcome to Cloudwatchmetricbeat. Based on previous work on [Cloudwatch Logs](https://github.com/e-travel/cloudwatchlogsbeat) and [Metrics](https://github.com/Technofy/cloudwatch_exporter)
 
-Ensure that this folder is at the following location: `${GOPATH}/github.com/narmitech/cloudwatchmetricbeat`.
+## Installation
+
+[Download a binary](https://github.com/narmitech/cloudwatchmetricbeat/releases), and put it in a good spot on your system. Or use the [Dockerfile](Dockerfile) to build a Docker image.
+
+To run this beat with a given [configuration](#configuration), run:
+
+```
+./cloudwatchmetricbeat -c cloudwatchmetricbeat.yml -e -d "*"
+```
 
 
 ## Credentials and permissions
@@ -75,10 +85,13 @@ requests (as of Jan 2015), that is around $45 per month.
 
 ### Requirements
 
-* [Golang](https://golang.org/dl/) 1.7
+* [Golang](https://golang.org/dl/) >= 1.7
 * [Glide](https://github.com/Masterminds/glide)
 
 ### Init Project
+
+Clone this repository at the following location: `${GOPATH}/github.com/narmitech/cloudwatchmetricbeat`.
+
 To get running with Cloudwatchmetricbeat and also install the
 dependencies, run the following command:
 

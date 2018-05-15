@@ -67,6 +67,7 @@ func (cwb *Cloudwatchmetricbeat) Run(b *beat.Beat) error {
 		go cwb.monitor()
 		<-cwb.done
 	} else {
+		logp.Info("Period is zero, running once and exiting.")
 		cwb.refreshMetrics()
 
 		for range cwb.config.Prospectors {
@@ -97,12 +98,10 @@ func (b *Cloudwatchmetricbeat) refreshMetrics() {
 		p := NewProspector(b, configProspector)
 		go func() {
 			p.Monitor()
-			b.done <- struct{}{} // signal we're done
+			if b.config.Period <= 0 {
+				b.done <- struct{}{} // signal we're done
+			}
 		}()
-
-		// for _, metricName := range prospector.Metrics {
-		// 	metric := NewMetric(prospector.Id, metricName)
-		// }
 	}
 }
 

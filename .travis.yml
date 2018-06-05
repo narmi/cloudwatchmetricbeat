@@ -28,4 +28,4 @@ deploy:
   on:
     tags: true
     branch: master
-    go: 1.10
+    go: '1.10'

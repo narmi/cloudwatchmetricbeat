@@ -1,4 +1,4 @@
-FROM golang:1.7
+FROM golang:1.10
 
 # install glide
 RUN go get -v github.com/Masterminds/glide \

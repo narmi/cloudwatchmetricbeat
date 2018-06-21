@@ -112,9 +112,11 @@ For further development, check out the [beat developer guide](https://www.elasti
 
 ### Build
 
-To build the binary for Cloudwatchmetricbeat run the command below. This will generate a binary in the same directory with the name cloudwatchmetricbeat.
+To build the binary for Cloudwatchmetricbeat run the commands below. This will generate a binary in the same directory with the name cloudwatchmetricbeat.
 
 ```
+make collect
+make update
 make
 ```
 

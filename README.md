@@ -6,7 +6,7 @@ Welcome to Cloudwatchmetricbeat. Based on previous work on [Cloudwatch Logs](htt
 
 ## Installation
 
-[Download a binary](https://github.com/narmitech/cloudwatchmetricbeat/releases), and put it in a good spot on your system. Or use the [Dockerfile](Dockerfile) to build a Docker image.
+[Download a binary](https://github.com/narmi/cloudwatchmetricbeat/releases), and put it in a good spot on your system. Or use the [Dockerfile](Dockerfile) to build a Docker image.
 
 To run this beat with a given [configuration](#configuration), run:
 
@@ -90,7 +90,7 @@ requests (as of Jan 2015), that is around $45 per month.
 
 ### Init Project
 
-Clone this repository at the following location: `${GOPATH}/github.com/narmitech/cloudwatchmetricbeat`.
+Clone this repository at the following location: `${GOPATH}/github.com/narmi/cloudwatchmetricbeat`.
 
 To get running with Cloudwatchmetricbeat and also install the
 dependencies, run the following command:
@@ -104,7 +104,7 @@ It will create a clean git history for each major step. Note that you can always
 To push Cloudwatchmetricbeat in the git repository, run the following commands:
 
 ```
-git remote set-url origin https://github.com/narmitech/cloudwatchmetricbeat
+git remote set-url origin https://github.com/narmi/cloudwatchmetricbeat
 git push origin master
 ```
 
@@ -179,9 +179,9 @@ make clean
 To clone Cloudwatchmetricbeat from the git repository, run the following commands:
 
 ```
-mkdir -p ${GOPATH}/github.com/narmitech/cloudwatchmetricbeat
-cd ${GOPATH}/github.com/narmitech/cloudwatchmetricbeat
-git clone https://github.com/narmitech/cloudwatchmetricbeat
+mkdir -p ${GOPATH}/github.com/narmi/cloudwatchmetricbeat
+cd ${GOPATH}/github.com/narmi/cloudwatchmetricbeat
+git clone https://github.com/narmi/cloudwatchmetricbeat
 ```
 
 

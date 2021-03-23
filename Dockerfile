@@ -10,14 +10,14 @@ RUN go get -v github.com/Masterminds/glide \
     && go install \
     && cd -
 
-COPY . $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat
-RUN cd $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat && make collect && make && make update
+COPY . $GOPATH/src/github.com/narmi/cloudwatchmetricbeat
+RUN cd $GOPATH/src/github.com/narmi/cloudwatchmetricbeat && make collect && make && make update
 
 RUN mkdir -p /etc/cloudwatchmetricbeat/ \
-    && cp $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat/cloudwatchmetricbeat /usr/local/bin/cloudwatchmetricbeat \
-    && cp $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat/_meta/beat.yml /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.yml \
-    && cp $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat/cloudwatchmetricbeat.template.json /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.template.json \
-    && cp $GOPATH/src/github.com/narmitech/cloudwatchmetricbeat/cloudwatchmetricbeat.template-es2x.json /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.template-es2x.json
+    && cp $GOPATH/src/github.com/narmi/cloudwatchmetricbeat/cloudwatchmetricbeat /usr/local/bin/cloudwatchmetricbeat \
+    && cp $GOPATH/src/github.com/narmi/cloudwatchmetricbeat/_meta/beat.yml /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.yml \
+    && cp $GOPATH/src/github.com/narmi/cloudwatchmetricbeat/cloudwatchmetricbeat.template.json /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.template.json \
+    && cp $GOPATH/src/github.com/narmi/cloudwatchmetricbeat/cloudwatchmetricbeat.template-es2x.json /etc/cloudwatchmetricbeat/cloudwatchmetricbeat.template-es2x.json
 
 WORKDIR /etc/cloudwatchmetricbeat
 ENTRYPOINT cloudwatchmetricbeat

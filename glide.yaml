@@ -1,4 +1,4 @@
-package: github.com/narmitech/cloudwatchmetricbeat
+package: github.com/narmi/cloudwatchmetricbeat
 import:
 - package: github.com/elastic/beats
   version: "5.3"
